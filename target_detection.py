@@ -1,15 +1,13 @@
 #! /usr/bin/env python
 # Time-stamp: <2021-11-16 15:36:47 christophe@pallier.org>
-""" This is a simple reaction-time experiment.
+""" This is a simple target-detection experiment.
 
-At each trial, a cross is presented at the center of the screen and
-the participant must press a key as quickly as possible.
+At each trial, lines are presented at the center of the screen and
+the participant must answer as quickly as possible.
 """
 
 ## To do : 
-##  Restrict the lines to appear only in the circle
-##  Condition the stimuli to not appear on top of each other (--> how ?). 
-##  Add a condition where the target is not present
+##  Condition the stimuli to not appear on top of each other (--> can do a list of possible positions, choose randomly from it and remove the elements already chosen). 
 
 import numpy as np
 import math
@@ -38,7 +36,7 @@ control.initialize(exp)
 
 blankscreen = stimuli.BlankScreen(WHITE)
 
-## Define the end points of the line (function of the angle) : 
+## Define the relative end points of the line (function of the angle) : 
 oblique_relative_end_point = np.array((LINE_LENGTH*math.sin(math.radians(OBLIQUE_ANGLE)), LINE_LENGTH*math.cos(math.radians(OBLIQUE_ANGLE))))
 vertical_relative_end_point = np.array((0, LINE_LENGTH))
 
@@ -51,7 +49,7 @@ instructions = stimuli.TextScreen("Instructions",
 
     Press the spacebar to start.""", text_colour=BLACK)
 
-exp.add_data_variable_names(['trial', 'key', 'rt', 'nb_distractors'])
+exp.add_data_variable_names(['target_type','target_presence', 'answer', 'accuracy', 'rt', 'nb_distractors'])
 
 def choose_start_point():
     x_coordinate = random.randrange(-CIRCLE_RADIUS+10,CIRCLE_RADIUS-LINE_LENGTH-10)
@@ -61,7 +59,7 @@ def choose_start_point():
     return((x_coordinate,y_coordinate))
 
 
-def make_stimulus(target_presence, target_type, nb_distractors, circle): 
+def make_stimulus(target_presence, target_type): #, nb_distractors
     if target_presence == False : 
         if target_type == "oblique target":
             for i in range (nb_distractors+2):
@@ -100,26 +98,34 @@ control.start(skip_ready_screen=True)
 instructions.present()
 exp.keyboard.wait()
 
-# Define possible positions :
-# circle = stimuli.Circle(360, colour=BLACK, line_width=2)
-
-target_type = ["oblique target", "vertical target"]
+## Define the conditions of the experiment : 
+nb_distractors = 20
+target_types = ["oblique target", "vertical target"]
 target_presences = [True, False] 
 list_conditions = []
-for target in target_type :
+for target in target_types :
     for presence in target_presences:
         list_conditions.append({"target_type":target,"target_presence": presence})
-list_trials=list_conditions*int((N_TRIALS/len(list_conditions)))
+list_trials=list_conditions*round((N_TRIALS/len(list_conditions)))
 random.shuffle(list_trials)
 
-nb_distractors = 20
 
 for trial in list_trials:
-    circle = stimuli.Circle(360, colour=BLACK, line_width=2)
-    stimulus=make_stimulus(trial["target_presence"], trial["target_type"], nb_distractors, circle)  
+    circle = stimuli.Circle(CIRCLE_RADIUS, colour=BLACK, line_width=2)
+    stimulus=make_stimulus(trial["target_presence"], trial["target_type"])  #, nb_distractors, circle
     stimulus.present()
     key, rt = exp.keyboard.wait()
-    exp.data.add([trial, key, rt, nb_distractors])
+    if key == 121 : 
+        answer = "Yes"
+    elif key == 110 :
+        answer = "No"
+    else : 
+        answer = "not_right_key"
+    if (trial["target_presence"] == True and answer == "No") or (trial["target_presence"] == False and answer == "Yes"):
+        accuracy = "incorrect"
+    elif (trial["target_presence"] == True and answer == "Yes") or (trial["target_presence"] == False and answer == "No"):
+        accuracy = "correct"
+    exp.data.add([trial["target_type"],trial["target_presence"], answer, accuracy, rt, nb_distractors])
     blankscreen.present()
     exp.clock.wait(500)
 
