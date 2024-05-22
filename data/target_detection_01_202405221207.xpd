@@ -1,0 +1,26 @@
+#Expyriment 0.10.0 (Python 3.7.16), .xpd-file, coding: cp1252
+#date: Wed May 22 2024 12:07:42
+#--EXPERIMENT INFO
+#e mainfile: target_detection.py
+#e sha1: 411566
+#e modules: 
+#e Experiment: Target Detection
+#e no between subject factors
+#--SUBJECT INFO
+#s id: 1
+subject_id,target_type,target_presence,answer,accuracy,rt,nb_distractors
+1,vertical,True,Yes,True,1632,10
+1,oblique,False,No,True,1040,10
+1,oblique,True,Yes,True,825,15
+1,vertical,False,No,True,1370,15
+1,oblique,False,No,True,1578,15
+1,vertical,False,Yes,False,1358,10
+1,vertical,True,Yes,True,827,5
+1,vertical,True,Yes,True,754,10
+1,oblique,True,Yes,True,1051,5
+1,oblique,True,Yes,True,747,5
+1,vertical,True,Yes,True,998,15
+1,vertical,False,No,True,1030,5
+1,oblique,False,No,True,1017,15
+1,vertical,False,No,True,1286,10
+1,oblique,False,No,True,609,5

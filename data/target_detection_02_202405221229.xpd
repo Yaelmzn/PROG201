@@ -1,0 +1,35 @@
+#Expyriment 0.10.0 (Python 3.7.16), .xpd-file, coding: cp1252
+#date: Wed May 22 2024 12:29:34
+#--EXPERIMENT INFO
+#e mainfile: target_detection.py
+#e sha1: 900e0e
+#e modules: 
+#e Experiment: Target Detection
+#e no between subject factors
+#--SUBJECT INFO
+#s id: 2
+subject_id,target_type,target_presence,answer,accuracy,rt,nb_distractors
+2,vertical,False,No,True,2251,15
+2,oblique,True,Yes,True,1112,10
+2,vertical,True,Yes,True,920,5
+2,vertical,False,No,True,1155,10
+2,oblique,False,No,True,923,15
+2,oblique,False,No,True,737,15
+2,vertical,True,Yes,True,1011,10
+2,vertical,True,Yes,True,1910,15
+2,vertical,False,No,True,983,15
+2,vertical,True,Yes,True,642,10
+2,oblique,False,No,True,737,10
+2,vertical,False,No,True,820,5
+2,oblique,False,No,True,813,10
+2,oblique,True,Yes,True,531,5
+2,vertical,True,Yes,True,664,15
+2,vertical,False,No,True,1117,5
+2,oblique,True,Yes,True,1371,15
+2,vertical,True,No,False,742,5
+2,oblique,False,No,True,691,5
+2,oblique,True,Yes,True,830,5
+2,oblique,False,No,True,871,5
+2,oblique,True,Yes,True,685,10
+2,vertical,False,No,True,865,10
+2,oblique,True,Yes,True,689,15
