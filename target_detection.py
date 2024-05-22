@@ -27,13 +27,14 @@ N_TRIALS = 20
 LINE_LENGTH = 20
 LINE_WIDTH = 2
 OBLIQUE_ANGLE = 20
-# HEIGHT_SCREEN = 1080
-# WIDTH_SCREEN = 1920
 CIRCLE_RADIUS = 360
+
+yes = 121
+no = 110
 
 ## Define the conditions of the experiment : 
 nbs_distractors = [5,10,15]
-target_types = ["oblique target", "vertical target"]
+target_types = ["oblique", "vertical"]
 target_presences = [True, False] 
 list_conditions = []
 for target in target_types :
@@ -52,7 +53,7 @@ blankscreen = stimuli.BlankScreen(WHITE)
 
 instructions = stimuli.TextScreen("Instructions",
     f"""You will have a target presented among distractors. Target is either an oblique line among vertical lines or a vertical line among oblique lines. 
-    You will have to decide which target you are looking for according to what the distractors are.
+    You will have to tell if the target is present (if there is a line that is different from the rest) or not .
     The target will be present 50% of the time and absent 50% of the time. 
     
     Your task is to press as quickly as possible y if the target is present or n if it is not (measure of reaction time).
@@ -79,31 +80,28 @@ def choose_start_point():
 
     return((x_coordinate,y_coordinate))
 
+def make_line(type):
+    if type == "vertical":
+        start_point = np.array(choose_start_point())
+        line = stimuli.Line(start_point, (start_point+vertical_relative_end_point), line_width=LINE_WIDTH, colour=BLACK)
+    if type == "oblique":
+        start_point_oblique = np.array(choose_start_point())
+        line = stimuli.Line(start_point_oblique, (start_point_oblique+oblique_relative_end_point), line_width=LINE_WIDTH, colour=BLACK, anti_aliasing=10)
+    return(line)
+
 
 def make_stimulus(target_presence, target_type, nb_distractors): 
-    distractor_type = "distractor oblique" if target_type == "vertical target" else "distractor vertical"
-    if distractor_type == "distractor vertical":
-        for i in range (nb_distractors+1):
-            start_point = np.array(choose_start_point())
-            vertical = stimuli.Line(start_point, (start_point+vertical_relative_end_point), line_width=LINE_WIDTH, colour=BLACK)
-            vertical.plot(circle)
-
-    elif distractor_type == "distractor oblique":
-        for i in range (nb_distractors+1):
-            start_point_oblique = np.array(choose_start_point())
-            oblique = stimuli.Line(start_point_oblique, (start_point_oblique+oblique_relative_end_point), line_width=LINE_WIDTH, colour=BLACK, anti_aliasing=10)
-            oblique.plot(circle)
-
     if target_presence == True:
-        if target_type == "oblique target":
-            start_point_oblique = np.array(choose_start_point())
-            oblique = stimuli.Line(start_point_oblique, (start_point_oblique+oblique_relative_end_point), line_width=LINE_WIDTH, colour=BLACK, anti_aliasing=10)
-            oblique.plot(circle)
+        target = make_line(target_type)
+        target.plot(circle)
+    else :
+        nb_distractors = nb_distractors+1
 
-        elif target_type == "vertical target":
-            start_point = np.array(choose_start_point())
-            vertical = stimuli.Line(start_point, (start_point+vertical_relative_end_point), line_width=LINE_WIDTH, colour=BLACK)
-            vertical.plot(circle)
+    distractor_type = "oblique" if target_type == "vertical" else "vertical"
+    for i in range (nb_distractors):
+        distractor = make_line(distractor_type)
+        distractor.plot(circle)
+
     return(circle)
 
 
@@ -119,13 +117,13 @@ while index_trial < len(list_trials):
     circle = stimuli.Circle(CIRCLE_RADIUS, colour=BLACK, line_width=2)
     stimulus = make_stimulus(trial["target_presence"], trial["target_type"], trial["nb_distractors"])
     stimulus.present()
-    key, rt = exp.keyboard.wait()
-    if key == 121 : 
+    key, rt = exp.keyboard.wait(keys=[yes,no])
+    if key == yes : 
         answer = "Yes"
-    elif key == 110 :
+    elif key == no :
         answer = "No"
-    else : 
-        continue
+    # else : 
+    #     continue
     if (trial["target_presence"] == True and answer == "No") or (trial["target_presence"] == False and answer == "Yes"):
         accuracy = "incorrect"
     elif (trial["target_presence"] == True and answer == "Yes") or (trial["target_presence"] == False and answer == "No"):
